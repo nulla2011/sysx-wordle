@@ -69,10 +69,8 @@ watch(
 </script>
 
 <template>
-  <div
-    class="cell"
-    :class="[colors ? `is-${colors}` : '', { 'is-flipping': flipping, 'is-typing': letter && !colors }]"
-  >
+  <div class="cell"
+    :class="[colors ? `is-${colors}` : '', { 'is-flipping': flipping, 'is-typing': letter && !colors }]">
     <span class="letter">{{ letter }}</span>
     <span v-if="char && letter" class="char">{{ char }}</span>
   </div>
@@ -121,7 +119,7 @@ watch(
   right: 0;
   font-size: calc(var(--tile, 68px) * 0.23);
   line-height: 1.1;
-  color: inherit;
+  color: white;
   user-select: none;
 }
 
@@ -154,6 +152,7 @@ watch(
   from {
     transform: scale(0.86);
   }
+
   to {
     transform: scale(1);
   }
@@ -163,9 +162,11 @@ watch(
   0% {
     transform: rotateX(0deg);
   }
+
   50% {
     transform: rotateX(90deg);
   }
+
   100% {
     transform: rotateX(0deg);
   }
