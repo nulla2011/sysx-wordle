@@ -63,6 +63,10 @@ export class WordList {
     const exact = candidates.find((e) => e[1] === answerCode)
     return (exact ?? candidates[0])[0]
   }
+  randomCode() {
+    const length = this.entries.length
+    return this.entries[Math.floor(Math.random() * length)][1]
+  }
 }
 
 /** The word list is served as a static asset, so it stays in sync with `public/`. */
