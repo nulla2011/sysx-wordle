@@ -21,13 +21,13 @@ const emit = defineEmits<{
           {{ status === 'won' ? '猜对了！' : '机会用完了' }}
         </p>
 
-        <p class="answer">
+        <p class="answer" v-if="status === 'won'">
           <span class="code">{{ answerCode }}</span>
           <span class="arrow" aria-hidden="true">→</span>
           <span class="name">{{ answerName }}</span>
         </p>
 
-        <p class="meta">
+        <p class="meta" v-if="status === 'won'">
           {{
             status === 'won'
               ? `第 ${guessCount} / ${maxGuesses} 步成功`
@@ -37,7 +37,7 @@ const emit = defineEmits<{
 
         <div class="actions">
           <button type="button" class="ghost" @click="emit('close')">看看盘面</button>
-          <button type="button" class="again" @click="emit('restart')">再来一局</button>
+          <button type="button" class="again" @click="emit('restart')">{{ status === 'won' ? "再来一局" : "重试" }}</button>
         </div>
       </div>
     </div>
