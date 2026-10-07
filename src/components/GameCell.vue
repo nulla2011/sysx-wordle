@@ -115,9 +115,10 @@ watch(
 .char {
   position: absolute;
   bottom: 4px;
-  left: 0;
+  left: 3px;
   right: 0;
-  font-size: calc(var(--tile, 68px) * 0.23);
+  font-size: calc(var(--tile, 68px) * 0.25);
+  font-family: var(--sans);
   line-height: 1.1;
   color: white;
   user-select: none;

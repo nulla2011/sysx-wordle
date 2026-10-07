@@ -49,22 +49,9 @@ const rows = computed(() => {
 
 <template>
   <div class="board" :class="{ 'is-shaky': shaky }" role="grid" aria-label="猜词盘面">
-    <div
-      v-for="row in rows"
-      :key="row.key"
-      class="row"
-      :class="{ 'is-current': row.isCurrent }"
-      role="row"
-    >
-      <GameCell
-        v-for="(tile, cellIndex) in row.tiles"
-        :key="cellIndex"
-        :letter="tile.letter"
-        :char="tile.char"
-        :state="tile.state"
-        :reveal="row.reveal"
-        :flip-delay="cellIndex * FLIP_STEP_MS"
-      />
+    <div v-for="row in rows" :key="row.key" class="row" :class="{ 'is-current': row.isCurrent }" role="row">
+      <GameCell v-for="(tile, cellIndex) in row.tiles" :key="cellIndex" :letter="tile.letter" :char="tile.char"
+        :state="tile.state" :reveal="row.reveal" :flip-delay="cellIndex * FLIP_STEP_MS" />
     </div>
   </div>
 </template>
@@ -74,7 +61,7 @@ const rows = computed(() => {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  --tile: 68px;
+  --tile: 80px;
 }
 
 .row {
@@ -88,19 +75,23 @@ const rows = computed(() => {
 }
 
 @keyframes shake {
+
   10%,
   90% {
     transform: translateX(-2px);
   }
+
   20%,
   80% {
     transform: translateX(4px);
   }
+
   30%,
   50%,
   70% {
     transform: translateX(-7px);
   }
+
   40%,
   60% {
     transform: translateX(7px);

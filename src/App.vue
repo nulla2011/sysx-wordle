@@ -71,12 +71,7 @@ function onKeydown(event: KeyboardEvent) {
       </div>
       <div class="tools">
         <button type="button" class="ghost" @click="helpOpen = true">玩法</button>
-        <button
-          type="button"
-          class="ghost"
-          :disabled="game.status.value === 'loading'"
-          @click="game.restart()"
-        >
+        <button type="button" class="ghost" :disabled="game.status.value === 'loading'" @click="game.restart()">
           重开
         </button>
       </div>
@@ -91,52 +86,28 @@ function onKeydown(event: KeyboardEvent) {
       </template>
 
       <template v-else>
-        <GameBoard
-          :guesses="game.guesses.value"
-          :draft="game.draft.value"
-          :code-length="game.codeLength"
-          :max-guesses="game.maxGuesses"
-          :current-row="game.currentRow.value"
-          :revealing="game.revealing.value"
-          :shaky="game.shaky.value"
-        />
+        <GameBoard :guesses="game.guesses.value" :draft="game.draft.value" :code-length="game.codeLength"
+          :max-guesses="game.maxGuesses" :current-row="game.currentRow.value" :revealing="game.revealing.value"
+          :shaky="game.shaky.value" />
 
         <p class="message" :class="{ 'is-visible': !!game.message.value }">
           {{ game.message.value || ' ' }}
         </p>
 
-        <MappingPanel :guesses="game.guesses.value" />
+        <!-- <MappingPanel :guesses="game.guesses.value" /> -->
       </template>
     </main>
 
     <footer class="dock">
-      <ResultOverlay
-        v-if="game.status.value === 'won' || game.status.value === 'lost'"
-        :status="game.status.value"
-        :answer-code="game.answerCode.value"
-        :answer-name="game.answerName.value"
-        :guess-count="game.guesses.value.length"
-        :max-guesses="game.maxGuesses"
-        @restart="game.restart()"
-      />
+      <ResultOverlay v-if="game.status.value === 'won' || game.status.value === 'lost'" :status="game.status.value"
+        :answer-code="game.answerCode.value" :answer-name="game.answerName.value"
+        :guess-count="game.guesses.value.length" :max-guesses="game.maxGuesses" @restart="game.restart()" />
 
-      <LetterKeyboard
-        v-if="game.wordList.value"
-        :letters="game.letters.value"
-        :key-states="game.keyStates.value"
-        :disabled="!game.acceptsInput.value"
-        @letter="game.press"
-        @erase="game.erase"
-        @submit="game.submit"
-      />
+      <LetterKeyboard v-if="game.wordList.value" :letters="game.letters.value" :key-states="game.keyStates.value"
+        :disabled="!game.acceptsInput.value" @letter="game.press" @erase="game.erase" @submit="game.submit" />
     </footer>
 
-    <HelpModal
-      :open="helpOpen"
-      :max-guesses="game.maxGuesses"
-      :code-length="game.codeLength"
-      @close="closeHelp"
-    />
+    <HelpModal :open="helpOpen" :max-guesses="game.maxGuesses" :code-length="game.codeLength" @close="closeHelp" />
   </div>
 </template>
 
