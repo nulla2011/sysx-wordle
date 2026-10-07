@@ -36,7 +36,7 @@ const emit = defineEmits<{
         </p>
 
         <div class="actions">
-          <button type="button" class="ghost" @click="emit('close')">看看盘面</button>
+          <button type="button" class="ghost" @click="emit('close')">关闭</button>
           <button type="button" class="again" @click="emit('restart')">{{ status === 'won' ? "再来一局" : "重试" }}</button>
         </div>
       </div>

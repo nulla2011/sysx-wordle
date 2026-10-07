@@ -18,8 +18,8 @@ const emit = defineEmits<{ (event: 'close'): void }>()
         </header>
 
         <ol class="steps">
-          <li>猜一个由 {{ codeLength }} 个字母组成的词，它有 {{ maxGuesses }} 次机会。</li>
-          <li>每个字母对应一个汉字，拼起来就是答案的中文名。</li>
+          <li>猜一个由 {{ codeLength }} 个字人名对应的汉语拼音缩写，有 {{ maxGuesses }} 次机会。</li>
+          <!-- <li>每个字母对应一个汉字，拼起来就是答案的中文名。</li> -->
           <li>每次提交后，字母下方都会显示这个字母在你这次输入里对应的汉字。</li>
         </ol>
 
@@ -27,7 +27,7 @@ const emit = defineEmits<{ (event: 'close'): void }>()
         <ul class="legend">
           <li>
             <span class="chip is-correct">正</span>
-            <span>这个字母的位置对了，答案的这位就是它。</span>
+            <span>这个字母的位置对了，而且答案的这一位就是它。</span>
           </li>
           <li>
             <span class="chip is-present">偏</span>
@@ -40,8 +40,8 @@ const emit = defineEmits<{ (event: 'close'): void }>()
         </ul>
 
         <p class="note">
-          颜色说的是<strong>字母</strong>猜得对不对，汉字是你自己这次输入的字，不会因颜色而改变。
-          只提交词库中存在的组合。
+          颜色指的是<strong>字母</strong>猜得对不对，汉字是这次输入的对应的人名的字，不会影响颜色。
+          只能提交 <a href="https://sysx.nulla.top" target="_blank">SYSX</a> 中存在的四字人名。
         </p>
       </div>
     </div>

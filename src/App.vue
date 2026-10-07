@@ -3,7 +3,6 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import GameBoard from './components/GameBoard.vue'
 import HelpModal from './components/HelpModal.vue'
 import LetterKeyboard from './components/LetterKeyboard.vue'
-import MappingPanel from './components/MappingPanel.vue'
 import ResultModal from './components/ResultModal.vue'
 import { useWordle } from './composables/useWordle'
 
@@ -93,8 +92,8 @@ function onKeydown(event: KeyboardEvent) {
   <div class="app">
     <header class="topbar">
       <div class="brand">
-        <h1>字母 Wordle</h1>
-        <p class="tagline">四位字母 · 四步机会 · 每步显示汉字</p>
+        <h1>女声优缩写 Wordle</h1>
+        <p class="tagline">四位字母 · 四步机会 · 每步显示中文名</p>
       </div>
       <div class="tools">
         <button type="button" class="ghost" @click="helpOpen = true">玩法</button>
@@ -120,14 +119,18 @@ function onKeydown(event: KeyboardEvent) {
         <p class="message" :class="{ 'is-visible': !!game.message.value }">
           {{ game.message.value || ' ' }}
         </p>
-
-        <!-- <MappingPanel :guesses="game.guesses.value" /> -->
       </template>
     </main>
 
     <footer class="dock">
       <LetterKeyboard v-if="game.wordList.value" :available="game.letters.value" :key-states="game.keyStates.value"
         :disabled="!game.acceptsInput.value" @letter="game.press" @erase="game.erase" @submit="game.submit" />
+
+      <p class="site">
+        <a href="https://sysx.nulla.top" target="_blank" rel="noopener noreferrer">
+          想不出来女声优缩写？点我👈🔗
+        </a>
+      </p>
     </footer>
 
     <ResultModal v-if="resultOpen && (game.status.value === 'won' || game.status.value === 'lost')"
@@ -252,5 +255,26 @@ function onKeydown(event: KeyboardEvent) {
   flex-direction: column;
   gap: 14px;
   align-items: center;
+}
+
+.site {
+  font-size: 18px;
+  font-weight: 600;
+  font-family: var(--sans);
+  color: var(--text);
+  margin-block: 0.5em;
+}
+
+.site a {
+  color: #2288dc;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.site a:hover {
+  border-bottom-color: currentColor;
 }
 </style>

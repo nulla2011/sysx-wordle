@@ -100,14 +100,14 @@ export function useWordle() {
   async function submit() {
     if (!acceptsInput.value) return
     if (draft.value.length < CODE_LENGTH) {
-      reject('字母不足四个')
+      reject('未填写完整')
       return
     }
 
     const code = draft.value
     const list = wordList.value
     if (!list?.isValidGuess(code)) {
-      reject('这个组合不在词库里')
+      reject('不是数据库里的声优缩写')
       return
     }
 
