@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import type { LetterState } from '../game/types'
 
+/** The original three-row QWERTY layout. */
+const ROWS = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'] as const
+
 const props = defineProps<{
-  letters: string
+  /** Every letter that actually occurs somewhere in the word list. */
+  available: string
   keyStates: Record<string, LetterState>
   disabled: boolean
 }>()
@@ -14,19 +17,17 @@ const emit = defineEmits<{
   (event: 'submit'): void
 }>()
 
-/** Split the alphabet of the word list across two rows, splitting near the middle. */
-const rows = computed(() => {
-  const all = [...props.letters]
-  const half = Math.ceil(all.length / 2)
-  return [all.slice(0, half), all.slice(half)]
-})
+/** A key is dead when the word list never uses that letter. */
+function isDead(letter: string): boolean {
+  return !props.available.includes(letter)
+}
 </script>
 
 <template>
   <div class="keyboard" :class="{ 'is-disabled': disabled }">
-    <div v-for="(row, rowIndex) in rows" :key="rowIndex" class="row">
+    <div v-for="(row, rowIndex) in ROWS" :key="row" class="row" :class="`row-${rowIndex + 1}`">
       <button
-        v-if="rowIndex === 1"
+        v-if="rowIndex === 2"
         type="button"
         class="key key-wide"
         :disabled="disabled"
@@ -41,15 +42,16 @@ const rows = computed(() => {
         :key="letter"
         type="button"
         class="key"
-        :class="keyStates[letter] ? `is-${keyStates[letter]}` : ''"
-        :disabled="disabled"
+        :class="[keyStates[letter] ? `is-${keyStates[letter]}` : '', { 'is-dead': isDead(letter) }]"
+        :disabled="disabled || isDead(letter)"
+        :aria-label="isDead(letter) ? `${letter}（词库中没有）` : letter"
         @click="emit('letter', letter)"
       >
         {{ letter }}
       </button>
 
       <button
-        v-if="rowIndex === 1"
+        v-if="rowIndex === 2"
         type="button"
         class="key key-wide"
         :disabled="disabled"
@@ -68,12 +70,7 @@ const rows = computed(() => {
   flex-direction: column;
   gap: 6px;
   width: 100%;
-  max-width: 520px;
-  transition: opacity 0.2s ease;
-}
-
-.keyboard.is-disabled {
-  opacity: 0.55;
+  max-width: 500px;
 }
 
 .row {
@@ -82,10 +79,15 @@ const rows = computed(() => {
   justify-content: center;
 }
 
+/* The original keyboard indents its shorter rows by half a key. */
+.row-2 {
+  padding: 0 16px;
+}
+
 .key {
   flex: 1 1 0;
   min-width: 0;
-  height: 52px;
+  height: 50px;
   padding: 0;
   border: 0;
   border-radius: 6px;
@@ -101,19 +103,26 @@ const rows = computed(() => {
     transform 0.08s ease;
 }
 
-.key:disabled {
-  cursor: default;
-}
-
 .key:not(:disabled):active {
   transform: scale(0.95);
 }
 
+.key:disabled {
+  cursor: default;
+}
+
+/* Letters the word list never uses: shown, but not pressable. */
+.key.is-dead {
+  background: var(--key-dead-bg);
+  color: var(--text);
+  opacity: 0.42;
+}
+
 .key-wide {
-  flex: 1.6 1 0;
+  flex: 1.5 1 0;
   font-family: var(--sans);
-  font-size: 14px;
-  letter-spacing: 0.04em;
+  font-size: 13px;
+  letter-spacing: 0.02em;
 }
 
 .key.is-correct {
@@ -132,13 +141,22 @@ const rows = computed(() => {
 }
 
 @media (max-width: 480px) {
+  .keyboard,
+  .row {
+    gap: 4px;
+  }
+
+  .row-2 {
+    padding: 0 11px;
+  }
+
   .key {
-    height: 46px;
+    height: 44px;
     font-size: 15px;
   }
 
   .key-wide {
-    font-size: 12px;
+    font-size: 11px;
   }
 }
 </style>

@@ -1,14 +1,24 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import GameBoard from './components/GameBoard.vue'
 import HelpModal from './components/HelpModal.vue'
 import LetterKeyboard from './components/LetterKeyboard.vue'
 import MappingPanel from './components/MappingPanel.vue'
-import ResultOverlay from './components/ResultOverlay.vue'
+import ResultModal from './components/ResultModal.vue'
 import { useWordle } from './composables/useWordle'
 
 const game = useWordle()
 const helpOpen = ref(false)
+/** Lets the player send the result popup away and study the board. */
+const resultDismissed = ref(false)
+
+const finished = computed(
+  () => game.status.value === 'won' || game.status.value === 'lost',
+)
+/** Wait for the final row's flip to finish before the popup takes over. */
+const resultOpen = computed(
+  () => finished.value && !game.revealing.value && !resultDismissed.value,
+)
 
 onMounted(() => {
   void game.start()
@@ -27,6 +37,11 @@ function closeHelp() {
   localStorage.setItem('sysx-wordle:help-seen', '1')
 }
 
+function restart() {
+  resultDismissed.value = false
+  game.restart()
+}
+
 function onKeydown(event: KeyboardEvent) {
   if (event.metaKey || event.ctrlKey || event.altKey) return
 
@@ -37,6 +52,18 @@ function onKeydown(event: KeyboardEvent) {
     }
     return
   }
+
+  // The result popup owns the keyboard while it is up.
+  if (resultOpen.value) {
+    if (event.key === 'Escape' || event.key === 'Enter') {
+      event.preventDefault()
+      resultDismissed.value = true
+    }
+    return
+  }
+  // After it is dismissed the board stays for study; a fresh game is an
+  // explicit choice, so no key silently restarts it.
+  if (finished.value) return
 
   if (event.key === 'Enter') {
     event.preventDefault()
@@ -67,11 +94,11 @@ function onKeydown(event: KeyboardEvent) {
     <header class="topbar">
       <div class="brand">
         <h1>字母 Wordle</h1>
-        <p class="tagline">四位字母 · 四步机会 · 每步翻开汉字</p>
+        <p class="tagline">四位字母 · 四步机会 · 每步显示汉字</p>
       </div>
       <div class="tools">
         <button type="button" class="ghost" @click="helpOpen = true">玩法</button>
-        <button type="button" class="ghost" :disabled="game.status.value === 'loading'" @click="game.restart()">
+        <button type="button" class="ghost" :disabled="game.status.value === 'loading'" @click="restart()">
           重开
         </button>
       </div>
@@ -82,7 +109,7 @@ function onKeydown(event: KeyboardEvent) {
 
       <template v-else-if="game.status.value === 'error'">
         <p class="placeholder is-error">{{ game.errorMessage.value }}</p>
-        <button type="button" class="retry" @click="game.restart()">重试</button>
+        <button type="button" class="retry" @click="restart()">重试</button>
       </template>
 
       <template v-else>
@@ -99,13 +126,14 @@ function onKeydown(event: KeyboardEvent) {
     </main>
 
     <footer class="dock">
-      <ResultOverlay v-if="game.status.value === 'won' || game.status.value === 'lost'" :status="game.status.value"
-        :answer-code="game.answerCode.value" :answer-name="game.answerName.value"
-        :guess-count="game.guesses.value.length" :max-guesses="game.maxGuesses" @restart="game.restart()" />
-
-      <LetterKeyboard v-if="game.wordList.value" :letters="game.letters.value" :key-states="game.keyStates.value"
+      <LetterKeyboard v-if="game.wordList.value" :available="game.letters.value" :key-states="game.keyStates.value"
         :disabled="!game.acceptsInput.value" @letter="game.press" @erase="game.erase" @submit="game.submit" />
     </footer>
+
+    <ResultModal v-if="resultOpen && (game.status.value === 'won' || game.status.value === 'lost')"
+      :status="game.status.value" :answer-code="game.answerCode.value" :answer-name="game.answerName.value"
+      :guess-count="game.guesses.value.length" :max-guesses="game.maxGuesses" @restart="restart()"
+      @close="resultDismissed = true" />
 
     <HelpModal :open="helpOpen" :max-guesses="game.maxGuesses" :code-length="game.codeLength" @close="closeHelp" />
   </div>
