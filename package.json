@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
+    "build:subpath": "vue-tsc -b && vite build --base=/wordle/",
     "preview": "vite preview"
   },
   "dependencies": {
