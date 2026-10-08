@@ -128,7 +128,7 @@ function onKeydown(event: KeyboardEvent) {
 
       <p class="site">
         <a href="https://sysx.nulla.top" target="_blank" rel="noopener noreferrer">
-          想不出来女声优缩写？点我👈🔗
+          想不出来女声优缩写？点我查询👈🔗
         </a>
       </p>
     </footer>
