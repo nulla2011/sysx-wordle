@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
   // Vite only exposes VITE_* to the client, so read the whole .env here and
   // pass ANSWER_API through as a compile-time constant.
   const env = loadEnv(mode, envDir, '')
-  const answerApi = env.VITE_ANSWER_API ?? process.env.VITE_ANSWER_API ?? ''
+  const answerApi = process.env.VITE_ANSWER_API ?? env.VITE_ANSWER_API ?? ''
 
   return {
     plugins: [vue()],
