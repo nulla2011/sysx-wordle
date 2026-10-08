@@ -26,38 +26,20 @@ function isDead(letter: string): boolean {
 <template>
   <div class="keyboard" :class="{ 'is-disabled': disabled }">
     <div v-for="(row, rowIndex) in ROWS" :key="row" class="row" :class="`row-${rowIndex + 1}`">
-      <button
-        v-if="rowIndex === 2"
-        type="button"
-        class="key key-wide"
-        :disabled="disabled"
-        aria-label="提交"
-        @click="emit('submit')"
-      >
+      <button v-if="rowIndex === 2" type="button" class="key key-wide" :disabled="disabled" aria-label="提交"
+        @click="emit('submit')">
         提交
       </button>
 
-      <button
-        v-for="letter in row"
-        :key="letter"
-        type="button"
-        class="key"
+      <button v-for="letter in row" :key="letter" type="button" class="key"
         :class="[keyStates[letter] ? `is-${keyStates[letter]}` : '', { 'is-dead': isDead(letter) }]"
-        :disabled="disabled || isDead(letter)"
-        :aria-label="isDead(letter) ? `${letter}（词库中没有）` : letter"
-        @click="emit('letter', letter)"
-      >
+        :disabled="disabled || isDead(letter)" :aria-label="isDead(letter) ? `${letter}（词库中没有）` : letter"
+        @click="emit('letter', letter)">
         {{ letter }}
       </button>
 
-      <button
-        v-if="rowIndex === 2"
-        type="button"
-        class="key key-wide"
-        :disabled="disabled"
-        aria-label="删除"
-        @click="emit('erase')"
-      >
+      <button v-if="rowIndex === 2" type="button" class="key key-wide" :disabled="disabled" aria-label="删除"
+        @click="emit('erase')">
         删除
       </button>
     </div>
@@ -71,6 +53,7 @@ function isDead(letter: string): boolean {
   gap: 6px;
   width: 100%;
   max-width: 500px;
+  touch-action: manipulation;
 }
 
 .row {
@@ -141,6 +124,7 @@ function isDead(letter: string): boolean {
 }
 
 @media (max-width: 480px) {
+
   .keyboard,
   .row {
     gap: 4px;
