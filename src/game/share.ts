@@ -34,7 +34,7 @@ export function buildShareText(
   { solved, guessCount, maxGuesses, url }: ShareOptions,
 ): string {
   const score = solved ? `${guessCount}/${maxGuesses}` : `X/${maxGuesses}`
-  const lines = [`字母 Wordle ${score}`, '']
+  const lines = [`女声优缩写 Wordle ${score}`, '']
 
   for (const guess of guesses) {
     lines.push(guess.tiles.map((tile) => SQUARES[tile.state] ?? HIDDEN).join(''))
@@ -43,6 +43,17 @@ export function buildShareText(
     lines.push('', url)
   }
   return lines.join('\n')
+}
+
+/**
+ * Copy the shareable result to the clipboard. This is the only share path: no
+ * `navigator.share`, so the same code runs on every platform.
+ */
+export async function copyResult(
+  guesses: readonly Guess[],
+  options: ShareOptions,
+): Promise<boolean> {
+  return copyText(buildShareText(guesses, options))
 }
 
 /** Copy `text`, preferring the async clipboard and falling back to a selection. */
@@ -83,35 +94,4 @@ function copyWithSelection(text: string): boolean {
   } finally {
     document.body.removeChild(area)
   }
-}
-
-export interface ShareOutcome {
-  ok: boolean
-  /** How the text left the page, for the confirmation message. */
-  method: 'share' | 'clipboard' | 'none'
-}
-
-/**
- * Hand the result to the platform: the native share sheet where the Web Share
- * API is available (phones), a clipboard copy everywhere else (desktop).
- */
-export async function shareResult(text: string, title: string): Promise<ShareOutcome> {
-  const nav = navigator as Navigator & { canShare?: (data: ShareData) => boolean }
-  const data: ShareData = { title, text }
-
-  // if (typeof nav.share === 'function' && (typeof nav.canShare !== 'function' || nav.canShare(data))) {
-  //   try {
-  //     await nav.share(data)
-  //     return { ok: true, method: 'share' }
-  //   } catch (error) {
-  //     // A dismissed share sheet is not a failure worth reporting.
-  //     if (error instanceof DOMException && error.name === 'AbortError') {
-  //       return { ok: true, method: 'share' }
-  //     }
-  //     // Anything else: fall back to copying.
-  //   }
-  // }
-
-  const copied = await copyText(text)
-  return { ok: copied, method: copied ? 'clipboard' : 'none' }
 }

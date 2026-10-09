@@ -48,6 +48,11 @@ function restart() {
   game.restart()
 }
 
+/** Skip the toast on a failed copy: the button already reports the failure. */
+function onShared(message: string, ok: boolean) {
+  if (ok) game.flash(message)
+}
+
 function onKeydown(event: KeyboardEvent) {
   if (event.metaKey || event.ctrlKey || event.altKey) return
 
@@ -143,7 +148,7 @@ function onKeydown(event: KeyboardEvent) {
     <ResultModal v-if="resultOpen && (game.status.value === 'won' || game.status.value === 'lost')"
       :status="game.status.value" :guesses="game.guesses.value" :max-guesses="game.maxGuesses"
       :share-url="shareUrl" :answer-code="game.answerCode.value" :answer-name="game.answerName.value"
-      @restart="restart()" @close="resultDismissed = true" @shared="game.flash($event)" />
+      @restart="restart()" @close="resultDismissed = true" @shared="onShared" />
 
     <HelpModal :open="helpOpen" :max-guesses="game.maxGuesses" :code-length="game.codeLength" @close="closeHelp" />
   </div>

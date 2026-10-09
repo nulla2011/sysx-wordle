@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { Share2 } from '@lucide/vue'
-import { buildShareText, shareResult } from '../game/share'
+import { Check, Share2 } from '@lucide/vue'
+import { ref, watch } from 'vue'
+import { copyResult } from '../game/share'
 import type { Guess } from '../game/types'
+
+/** How long the button keeps its "copied" confirmation. */
+const CONFIRM_MS = 2000
 
 const props = withDefaults(
   defineProps<{
@@ -14,31 +18,55 @@ const props = withDefaults(
   { url: '' },
 )
 
-const emit = defineEmits<{ (event: 'done', message: string): void }>()
+const emit = defineEmits<{
+  /** `ok` is false when the copy failed, so the page can skip its toast. */
+  (event: 'done', message: string, ok: boolean): void
+}>()
 
-async function onShare() {
-  const text = buildShareText(props.guesses, {
+/** The rest of the page reacts through this, so it flashes only on success. */
+const copied = ref(false)
+let confirmTimer: ReturnType<typeof setTimeout> | undefined
+
+watch(
+  () => props.guesses.length,
+  () => {
+    clearTimeout(confirmTimer)
+    copied.value = false
+  },
+)
+
+async function onCopy() {
+  clearTimeout(confirmTimer)
+  const ok = await copyResult(props.guesses, {
     solved: props.solved,
     guessCount: props.guesses.length,
     maxGuesses: props.maxGuesses,
     url: props.url || undefined,
   })
 
-  const outcome = await shareResult(text, '字母 Wordle')
-  if (outcome.method === 'clipboard') {
-    emit('done', '成绩已复制到剪贴板')
-  } else if (outcome.method === 'none') {
-    emit('done', '分享失败，请手动复制')
-  } else {
-    emit('done', '已打开分享')
+  if (!ok) {
+    copied.value = false
+    emit('done', '复制失败，请手动复制', false)
+    return
   }
+
+  copied.value = true
+  emit('done', '成绩已复制', true)
+  confirmTimer = setTimeout(() => (copied.value = false), CONFIRM_MS)
 }
 </script>
 
 <template>
-  <button type="button" class="share" aria-label="分享成绩" @click="onShare">
-    <Share2 class="icon" :size="16" :stroke-width="2.2" aria-hidden="true" />
-    <span>分享成绩</span>
+  <button
+    type="button"
+    class="share"
+    :class="{ 'is-copied': copied }"
+    :aria-label="copied ? '已复制' : '复制成绩'"
+    @click="onCopy"
+  >
+    <Check v-if="copied" class="icon" :size="16" :stroke-width="2.6" aria-hidden="true" />
+    <Share2 v-else class="icon" :size="16" :stroke-width="2.2" aria-hidden="true" />
+    <span>{{ copied ? '已复制' : '分享成绩' }}</span>
   </button>
 </template>
 
@@ -48,7 +76,7 @@ async function onShare() {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 9px 16px;
+  padding: 10px 14px;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: transparent;
@@ -58,12 +86,20 @@ async function onShare() {
   cursor: pointer;
   transition:
     border-color 0.15s ease,
-    background-color 0.15s ease;
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .share:hover {
   border-color: var(--tile-border-filled);
   background: var(--panel-bg);
+}
+
+/* The confirmation state: the button itself reports the result. */
+.share.is-copied {
+  border-color: var(--color-correct);
+  background: var(--color-correct);
+  color: #fff;
 }
 
 .icon {
