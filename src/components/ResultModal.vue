@@ -1,15 +1,25 @@
 <script setup lang="ts">
-defineProps<{
-  status: 'won' | 'lost'
-  answerCode: string
-  answerName: string
-  guessCount: number
-  maxGuesses: number
-}>()
+import ShareResult from './ShareResult.vue'
+import type { Guess } from '../game/types'
+
+withDefaults(
+  defineProps<{
+    status: 'won' | 'lost'
+    guesses: Guess[]
+    maxGuesses: number
+    /** Page link appended to the shared result. Never part of the grid. */
+    shareUrl?: string
+    /** Revealed only on a win. */
+    answerCode?: string
+    answerName?: string
+  }>(),
+  { shareUrl: '', answerCode: '', answerName: '' },
+)
 
 const emit = defineEmits<{
   (event: 'restart'): void
   (event: 'close'): void
+  (event: 'shared', message: string): void
 }>()
 </script>
 
@@ -27,17 +37,30 @@ const emit = defineEmits<{
           <span class="name">{{ answerName }}</span>
         </p>
 
-        <p class="meta" v-if="status === 'won'">
-          {{
-            status === 'won'
-              ? `第 ${guessCount} / ${maxGuesses} 步成功`
-              : `答案是「${answerName}」，${maxGuesses} 步都没猜中`
-          }}
+        <p class="answer" v-else-if="answerName">
+          <span class="name">{{ answerName }}</span>
         </p>
 
+        <p class="meta" v-if="status === 'won'">
+          第 {{ guesses.length }} / {{ maxGuesses }} 步成功
+        </p>
+        <p class="meta" v-else-if="answerName">
+          答案是「{{ answerName }}」，{{ maxGuesses }} 步都没猜中
+        </p>
+        <p class="meta" v-else>试试分享你的成绩，看看别人要几步。</p>
+
         <div class="actions">
+          <ShareResult
+            :guesses="guesses"
+            :solved="status === 'won'"
+            :max-guesses="maxGuesses"
+            :url="shareUrl"
+            @done="emit('shared', $event)"
+          />
           <button type="button" class="ghost" @click="emit('close')">关闭</button>
-          <button type="button" class="again" @click="emit('restart')">{{ status === 'won' ? "再来一局" : "重试" }}</button>
+          <button type="button" class="again" @click="emit('restart')">
+            {{ status === 'won' ? '再来一局' : '重试' }}
+          </button>
         </div>
       </div>
     </div>
@@ -117,16 +140,21 @@ const emit = defineEmits<{
   color: var(--text);
 }
 
+/* Stacked full-width actions: three buttons read better than a cramped row. */
 .actions {
   display: flex;
-  gap: 10px;
-  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
   margin-top: 20px;
+}
+
+.actions > * {
+  width: 100%;
 }
 
 .ghost,
 .again {
-  padding: 9px 18px;
+  padding: 10px 14px;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;

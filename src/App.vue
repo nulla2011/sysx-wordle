@@ -11,6 +11,13 @@ const helpOpen = ref(false)
 /** Lets the player send the result popup away and study the board. */
 const resultDismissed = ref(false)
 
+/** The page itself, so a shared result tells the recipient where to play. */
+const shareUrl = computed(() => {
+  if (typeof window === 'undefined') return ''
+  const { origin, pathname } = window.location
+  return `${origin}${pathname}`
+})
+
 const finished = computed(
   () => game.status.value === 'won' || game.status.value === 'lost',
 )
@@ -134,9 +141,9 @@ function onKeydown(event: KeyboardEvent) {
     </footer>
 
     <ResultModal v-if="resultOpen && (game.status.value === 'won' || game.status.value === 'lost')"
-      :status="game.status.value" :answer-code="game.answerCode.value" :answer-name="game.answerName.value"
-      :guess-count="game.guesses.value.length" :max-guesses="game.maxGuesses" @restart="restart()"
-      @close="resultDismissed = true" />
+      :status="game.status.value" :guesses="game.guesses.value" :max-guesses="game.maxGuesses"
+      :share-url="shareUrl" :answer-code="game.answerCode.value" :answer-name="game.answerName.value"
+      @restart="restart()" @close="resultDismissed = true" @shared="game.flash($event)" />
 
     <HelpModal :open="helpOpen" :max-guesses="game.maxGuesses" :code-length="game.codeLength" @close="closeHelp" />
   </div>
