@@ -1,4 +1,6 @@
 /// <reference types="vite/client" />
 
-/** Answer endpoint, injected from `ANSWER_API` in `.env` by `vite.config.ts`. */
-declare const __ANSWER_API__: string
+interface ImportMetaEnv {
+  /** Answer endpoint base URL from `.env`, e.g. `https://…/wordle`. */
+  readonly VITE_ANSWER_API?: string
+}

@@ -1,13 +1,14 @@
 import { CODE_LENGTH } from './types'
 
-/** Endpoint from `ANSWER_API` in `.env`, inlined at build time. */
-export const ANSWER_API_URL: string =
-  typeof __ANSWER_API__ === 'string' ? `${__ANSWER_API__}/today` : ''
+/** Answer endpoint from `VITE_ANSWER_API` in `.env`. */
+export const ANSWER_API_URL: string = import.meta.env.VITE_ANSWER_API
+  ? `${import.meta.env.VITE_ANSWER_API}/today`
+  : ''
 
 /** The endpoint's raw body, e.g. `hgcn`. */
 export async function fetchAnswerText(signal?: AbortSignal): Promise<string> {
   if (!ANSWER_API_URL) {
-    throw new Error('未配置答案接口：请在 .env 中设置 ANSWER_API')
+    throw new Error('未配置答案接口：请在 .env 中设置 VITE_ANSWER_API')
   }
 
   const response = await fetch(ANSWER_API_URL, { signal })

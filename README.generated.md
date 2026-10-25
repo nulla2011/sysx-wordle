@@ -23,9 +23,9 @@
 | 来源 | 说明 |
 | --- | --- |
 | `public/data.json` | 词组列表，共 587 条 `[汉字, 字母]`，字母组合用于校验输入。同一个字母组合可能对应多个名字（576 个唯一组合）。 |
-| `.env` 的 `ANSWER_API` | 今日答案接口，返回裸字母组合（如 `hgcn`）。由 `vite.config.ts` 读取后以编译期常量注入前端。 |
+| `.env` 的 `VITE_ANSWER_API` | 今日答案接口，返回裸字母组合（如 `hgcn`）。前端通过 `import.meta.env` 读取。 |
 
-`.env` 里的变量默认只有 `VITE_` 前缀才会暴露给客户端，所以 `vite.config.ts` 用 `loadEnv(mode, envDir, '')` 读取原始的 `ANSWER_API`，再通过 `define` 注入为 `__ANSWER_API__`。换接口只需改 `.env` 后重启开发服务器。
+换接口只需改 `.env` 里的 `VITE_ANSWER_API` 后重启开发服务器。
 
 ## 开发
 
