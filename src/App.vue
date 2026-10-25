@@ -105,7 +105,7 @@ function onKeydown(event: KeyboardEvent) {
     <header class="topbar">
       <div class="brand">
         <h1>女声优缩写 Wordle</h1>
-        <p class="tagline">四位字母 · 四步机会 · 每步显示中文名</p>
+        <p class="tagline">四位字母 · 五步机会 · 每步显示中文名</p>
       </div>
       <div class="tools">
         <button type="button" class="ghost" @click="helpOpen = true">玩法</button>
@@ -146,9 +146,9 @@ function onKeydown(event: KeyboardEvent) {
     </footer>
 
     <ResultModal v-if="resultOpen && (game.status.value === 'won' || game.status.value === 'lost')"
-      :status="game.status.value" :guesses="game.guesses.value" :max-guesses="game.maxGuesses"
-      :share-url="shareUrl" :answer-code="game.answerCode.value" :answer-name="game.answerName.value"
-      @restart="restart()" @close="resultDismissed = true" @shared="onShared" />
+      :status="game.status.value" :guesses="game.guesses.value" :max-guesses="game.maxGuesses" :share-url="shareUrl"
+      :answer-code="game.answerCode.value" :answer-name="game.answerName.value" @restart="restart()"
+      @close="resultDismissed = true" @shared="onShared" />
 
     <HelpModal :open="helpOpen" :max-guesses="game.maxGuesses" :code-length="game.codeLength" @close="closeHelp" />
   </div>

@@ -15,7 +15,7 @@ export const STATE_RANK: Record<LetterState, number> = {
 export const CODE_LENGTH = 4
 
 /** Number of allowed submissions. */
-export const MAX_GUESSES = 4
+export const MAX_GUESSES = 5
 
 /** A single letter tile of one submitted guess. */
 export interface Tile {

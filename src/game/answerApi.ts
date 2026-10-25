@@ -2,7 +2,7 @@ import { CODE_LENGTH } from './types'
 
 /** Endpoint from `ANSWER_API` in `.env`, inlined at build time. */
 export const ANSWER_API_URL: string =
-  typeof __ANSWER_API__ === 'string' ? __ANSWER_API__ : ''
+  typeof __ANSWER_API__ === 'string' ? `${__ANSWER_API__}/today` : ''
 
 /** The endpoint's raw body, e.g. `hgcn`. */
 export async function fetchAnswerText(signal?: AbortSignal): Promise<string> {
