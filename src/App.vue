@@ -5,7 +5,7 @@ import HelpModal from './components/HelpModal.vue'
 import HistoryModal from './components/HistoryModal.vue'
 import LetterKeyboard from './components/LetterKeyboard.vue'
 import ResultModal from './components/ResultModal.vue'
-import { todayIso } from './game/date'
+import { todayBeijing } from './game/date'
 import { useWordle } from './composables/useWordle'
 
 const game = useWordle()
@@ -24,7 +24,7 @@ const shareUrl = computed(() => {
 })
 
 /** The shared result names the puzzle's day: a replay's day, else today. */
-const shareDate = computed(() => practice.value?.date ?? todayIso())
+const shareDate = computed(() => practice.value?.date ?? todayBeijing())
 
 const finished = computed(
   () => game.status.value === 'won' || game.status.value === 'lost',

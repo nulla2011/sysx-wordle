@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, shallowRef, watch } from 'vue'
-import { isoDate } from '../game/date'
+import { beijingDate } from '../game/date'
 import { useHistory } from '../composables/useHistory'
 import { loadNaive, type Naive } from '../naive'
 
@@ -54,7 +54,7 @@ function onPick(value: string | null) {
 
 /** A day is pickable only when the history actually holds an entry for it. */
 function isDateDisabled(timestamp: number): boolean {
-  return !byDate.value.has(isoDate(timestamp))
+  return !byDate.value.has(beijingDate(timestamp))
 }
 
 // The app themes itself with `prefers-color-scheme`; Naive UI needs the same
